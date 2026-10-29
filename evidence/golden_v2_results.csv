@@ -1,0 +1,23 @@
+#,item_id,source,Human: SIP journey?,Human: pattern,Engine status,Engine: pattern,Result
+1,7568,play_store,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+2,35750,play_store,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+3,27140,play_store,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+4,26935,play_store,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+5,27147,play_store,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+6,5352,play_store,Y,can't change SIP without cancelling,classified,can't change SIP without cancelling,Agree
+7,17948,play_store,Y,can't change SIP without cancelling,uncertain,setup/other,Disagree (engine flagged unsure)
+8,11931,youtube_comment,Y,money got tight,uncertain,money got tight,Agree (engine flagged unsure)
+9,21672,youtube_comment,Y,money/payment went wrong,classified,money/payment went wrong,Agree
+10,19306,youtube_comment,Y,setup/other,classified,setup/other,Agree
+11,41192,reddit_comment,Y,doubting fund or advice,declined: not a SIP journey,-,Disagree: wrongly declined a newbie question
+12,19531,youtube_comment,Y,doubting fund or advice,classified,returns look bad,Disagree: confident and wrong
+13,34813,tradingqna,Y,returns look bad,declined: not a SIP journey,-,Disagree: wrongly declined a stayer story
+14,1980,tradingqna,Y,returns look bad,uncertain,money got tight,Disagree (engine flagged unsure)
+15,21125,play_store,Y,can't change SIP without cancelling,classified,setup/other,Disagree: confident and wrong
+16,422,tradingqna,Y,doubting fund or advice,uncertain,setup/other,Disagree (engine flagged unsure)
+17,39305,play_store,Y,setup/other,declined: not a SIP journey,-,Disagree: wrongly declined praise
+18,13162,youtube_comment,Y,setup/other,declined: off-topic,-,Disagree: Devanagari text not understood
+19,41587,reddit_comment,N,-,uncertain,returns look bad,Disagree: should have declined
+20,2004,tradingqna,N,-,uncertain,numbers don't add up,Disagree: should have declined
+21,8645,play_store,N,-,classified,money/payment went wrong,Disagree: F&O trading complaint leaked through
+22,29873,play_store,N,-,declined: not a SIP journey,-,Agree

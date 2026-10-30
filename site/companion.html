@@ -296,7 +296,7 @@ function doOpt(o) {
   if (o === "ticket") return done("Ticket raised: #48213", "We've sent the debit time, amount and fund to support. You'll see replies here, and it stays open until it's resolved.", "ticket");
   if (o === "explain") return go(explainNumbers);
   if (o === "flex") return go(flexOptions);
-  if (o === "payhelp") { S.variant = "balance"; return go(rescue); }
+  if (o === "payhelp") { S.variant = /debit|deduct|\bcut\b|kat|units?|allot|refund|nav/i.test(S.lastText || "") ? "pending" : "balance"; return go(rescue); }
   if (o === "funds") return go(aboutFunds);
   if (o === "stop") return stopConfirm();
   if (o === "menu") return go(fallbackMenu, S.lastEngine, null);
@@ -355,6 +355,7 @@ async function reasonGo() {
       const r = await fetch(ENGINE, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "classify", text }) });
       const j = await r.json();
       log("engine", { status: j.status, family: j.family?.[0]?.code || null, share: j.family?.[0]?.share ?? null });
+      S.lastText = text;
       return go(routeFromEngine, j, picked);
     } catch (e) { log("engine_error"); return go(fallbackMenu, null, "We couldn't reach the matching service."); }
   }
@@ -383,7 +384,7 @@ function routeFromEngine(j, picked) {
 }
 function doOptInto(card, j) {
   S.lastEngine = j;
-  ({ flex: flexOptions, explain: explainNumbers, funds: aboutFunds, payhelp: () => { S.variant = "balance"; rescue(); } })[card]();
+  ({ flex: flexOptions, explain: explainNumbers, funds: aboutFunds, payhelp: () => { S.variant = /debit|deduct|\bcut\b|kat|units?|allot|refund|nav/i.test(S.lastText || "") ? "pending" : "balance"; rescue(); } })[card]();
 }
 function fallbackMenu(j, msg) {
   render("Stop SIP", `<div class="card"><h3>Here are all your options</h3><p>${msg ? esc(msg) : "We couldn't match that confidently, so we're not guessing."}</p>
@@ -486,7 +487,7 @@ document.addEventListener("click", e => {
 document.querySelectorAll(".scen > li > button").forEach(b => b.addEventListener("click", () => start(+b.dataset.s)));
 document.querySelectorAll("#v1 .vchip").forEach(b => b.addEventListener("click", () => { S.variant = b.dataset.v; document.querySelectorAll("#v1 .vchip").forEach(x => x.setAttribute("aria-pressed", String(x === b))); start(1); }));
 function start(n) {
-  S.scen = n; S.t0 = Date.now(); S.lastEngine = null;
+  S.scen = n; S.t0 = Date.now(); S.lastEngine = null; S.lastText = "";
   document.querySelectorAll(".scen > li > button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === n)));
   $("#v1").hidden = n !== 1;
   log("scenario_start");

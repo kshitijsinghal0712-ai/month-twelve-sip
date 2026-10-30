@@ -27,3 +27,11 @@ Rule written down: relevant = a person describing their OWN SIP/MF experience or
   - family accuracy on relevant 62.5% -> 65.2% (majority baseline 42%)
   - confident answers 77% right (52 relevant); "possibly" answers 31% right (13)
 - Golden v2 with relabel + original gate: 11/22 (stayer praise post #17 recovered). Stayer story #13 and newbie question #11 still declined; remains a known limitation.
+
+## Companion MVP routing (golden v2, 22 posts, after relabel)
+- Specific help card shown confidently: 9; right card 7 (78%). Misses: fund-choice doubt -> numbers explainer; F&O trading complaint -> payment help.
+- "Which is closer?" (uncertain): 5. Full menu fallback: 8.
+- Cards contain no advice, so a wrong card costs a tap, not a bad decision.
+- Live spot checks 2026-10-30: rent up -> flex options; debited/no units -> units-on-the-way screen; autopay keeps failing -> bank-declined screen; red 6 months -> numbers explainer; biryani -> full menu; Devanagari -> "can't read this script" message.
+- Known weak spot: Hinglish payment complaint ("paisa kat gaya lekin units nahi aaye") -> uncertain (numbers 0.29), so the user is asked to pick. Safe, but not smart.
+- Test taps from development deleted from mvp_events before user tests.

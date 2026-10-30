@@ -164,7 +164,7 @@ table.np th:first-child,table.np td:first-child{text-align:left}
           <li>Scenario 2: you're short this month. Do what you'd really do.</li>
           <li>Scenario 3: work out whether you've lost money.</li>
         </ol>
-        <p class="fine" style="margin-top:8px">Taps are logged anonymously (scenario, button, time) so tests produce numbers. Nothing you type is stored beyond 300 characters, and never with your name.</p>
+        <p class="fine" style="margin-top:8px">Taps are logged anonymously (scenario, button, time) so tests produce numbers. Anything you type goes only to the matching engine and is never stored.</p>
       </div>
 
       <div id="why-data">
@@ -264,7 +264,7 @@ function rescue() {
       <li><span class="m">✓</span><span>Sent to the fund house<small>5 Nov, 14:30</small></span></li>
       <li><span class="m p">…</span><span>Units added to your account<small>Usually within 1–2 working days. We'll notify you.</small></span></li></ul>` : ""}
     </div>
-    <div class="note">Your SIP is still active. One missed month doesn't cancel it.</div>`;
+    <div class="note">${S.variant === "pending" ? "Your SIP is on track. Nothing to do unless the units don't arrive." : "Your SIP is still active. One missed month doesn't cancel it."}</div>`;
   if (r.fix === "pay") body += `<h2 style="font-size:15px;margin:14px 2px 8px">What would you like to do?</h2>
     ${opt("pay", "Pay this instalment now", "₹1,000 by UPI. November counts as paid.")}
     ${opt("skip", "Skip November", "Nothing to pay now. Your SIP continues on 5 Dec.")}
@@ -296,7 +296,7 @@ function doOpt(o) {
   if (o === "ticket") return done("Ticket raised: #48213", "We've sent the debit time, amount and fund to support. You'll see replies here, and it stays open until it's resolved.", "ticket");
   if (o === "explain") return go(explainNumbers);
   if (o === "flex") return go(flexOptions);
-  if (o === "payhelp") { S.variant = "pending"; return go(rescue); }
+  if (o === "payhelp") { S.variant = "balance"; return go(rescue); }
   if (o === "funds") return go(aboutFunds);
   if (o === "stop") return stopConfirm();
   if (o === "menu") return go(fallbackMenu, S.lastEngine, null);
@@ -383,7 +383,7 @@ function routeFromEngine(j, picked) {
 }
 function doOptInto(card, j) {
   S.lastEngine = j;
-  ({ flex: flexOptions, explain: explainNumbers, funds: aboutFunds, payhelp: () => { S.variant = "pending"; rescue(); } })[card]();
+  ({ flex: flexOptions, explain: explainNumbers, funds: aboutFunds, payhelp: () => { S.variant = "balance"; rescue(); } })[card]();
 }
 function fallbackMenu(j, msg) {
   render("Stop SIP", `<div class="card"><h3>Here are all your options</h3><p>${msg ? esc(msg) : "We couldn't match that confidently, so we're not guessing."}</p>

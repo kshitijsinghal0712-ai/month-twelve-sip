@@ -26,7 +26,7 @@ Rule written down: relevant = a person describing their OWN SIP/MF experience or
   - relevance accuracy 71.3% -> 76.5%
   - family accuracy on relevant 62.5% -> 65.2% (majority baseline 42%)
   - confident answers 77% right (52 relevant); "possibly" answers 31% right (13)
-- Golden v2 with relabel + original gate: 11/22 (stayer praise post #17 recovered). Stayer story #13 and newbie question #11 still declined; remains a known limitation.
+- Golden v2 with relabel + original gate: 12/22 (#7 now gets the right pattern; stayer praise post #17 recovered). Stayer story #13 and newbie question #11 still declined; remains a known limitation.
 
 ## Companion MVP routing (golden v2, 22 posts, after relabel)
 - Specific help card shown confidently: 9; right card 7 (78%). Misses: fund-choice doubt -> numbers explainer; F&O trading complaint -> payment help.

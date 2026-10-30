@@ -13,3 +13,17 @@
 - Confident answers ("classified"): 8/11 right (73%). Flagged "uncertain": 1/6 right. Declined: 1/5 right.
 - Money/payment problems: 6/6 right.
 - Failures: over-declines stayer/praise/newbie posts (3), Devanagari (1), F&O complaint leak (1), confident wrong family (2), off-topic marked uncertain instead of declined (2).
+
+## Fix attempt: engine declines stayer/praise posts (2026-10-30)
+Diagnosis: label drift. In batches 1-9 first-hand "I've been investing and it's fine" posts were marked irrelevant; later batches marked them relevant. Engine learned "positive post = not a SIP journey".
+Rule written down: relevant = a person describing their OWN SIP/MF experience or asking about it, good or bad. Not relevant = market commentary, advice to others, trading, news.
+- Corrected 31 labels (table label_corrections), all relevant false->true.
+- Tried 3 extra gate rules (first-person override, trading-term block, Devanagari).
+  - On golden v2 they lifted agreement 10/22 -> 15/22, BUT golden v2 was used to design them.
+  - On 115 untouched holdout posts every variant was equal or worse (first-person override: relevance 76% -> 69%, irrelevant posts answered 24 -> 34). REJECTED.
+  - Kept only a Devanagari message ("can't read this script, try English/Hinglish") instead of a misleading "off-topic".
+- After relabel, original gate, holdout (n=115, 69 relevant):
+  - relevance accuracy 71.3% -> 76.5%
+  - family accuracy on relevant 62.5% -> 65.2% (majority baseline 42%)
+  - confident answers 77% right (52 relevant); "possibly" answers 31% right (13)
+- Golden v2 with relabel + original gate: 11/22 (stayer praise post #17 recovered). Stayer story #13 and newbie question #11 still declined; remains a known limitation.

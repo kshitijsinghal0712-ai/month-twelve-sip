@@ -61,6 +61,10 @@ Deno.serve(async (req) => {
     if (text.length < 10) return json({ error: "Write at least a sentence." }, 400);
     if (text.length > 1500) return json({ error: "Keep it under 1,500 characters." }, 400);
     if (PII.test(text)) return json({ status: "blocked_pii", message: "That looks like it contains a PAN or account number. Please remove it. This tool never needs personal details." });
+    // The embedding model cannot read Devanagari reliably (it scores as off-topic). Say so instead of guessing.
+    const letters = text.replace(/\s/g, "").length || 1;
+    const deva = (text.match(/[ऀ-ॿ]/g) || []).length;
+    if (body.mode !== "search" && deva / letters > 0.3) return json({ status: "abstain_language", checks: [], family: [], need: [], neighbours: [], evidence: [], message: "This engine can't read Devanagari script yet. Try writing the same thing in English or Hinglish (Hindi in English letters).", note: "Pattern-matching over public posts. Not investment advice." });
     const q = JSON.stringify(await embed(text));
 
     if (body.mode === "search") {

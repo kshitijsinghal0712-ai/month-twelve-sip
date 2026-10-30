@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Month Twelve companion: prototype</title>
+<meta name="description" content="A clickable prototype of an in-app companion for the moment a first SIP is at risk: a failed instalment, a tight month, or a portfolio in the red. Eval-gated, no investment advice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF1EF; --paper-2:#E2E8E5; --ink:#17263A; --ink-2:#44546A; --ink-3:#6B7A8C; --line:#C9D3CF; --white:#FBFCFC;
+  --blue:#0072B2; --blue-soft:#E3F0F8; --orange:#E69F00; --warn:#9A5B00; --warn-soft:#FFF4DE; --ok:#0B6E4F; --ok-soft:#E3F3EC; --stop:#A33A1A;
+  --display:"Bricolage Grotesque", system-ui, sans-serif; --body:"Public Sans", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body)}
+a{color:var(--blue);text-underline-offset:2px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 20px 40px;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:48px;align-items:start}
+.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.brand{font:800 20px/1 var(--display);text-decoration:none;color:var(--ink)}
+.brand small{font:500 14px var(--body);color:var(--ink-3);margin-left:8px}
+.top nav a{font-size:14px;color:var(--ink-2);text-decoration:none;margin-left:18px}
+.top nav a:hover{color:var(--ink);text-decoration:underline}
+
+/* left brief */
+h1{font:800 clamp(32px,4.6vw,50px)/1.02 var(--display);letter-spacing:-.02em;margin:18px 0 14px}
+.lede{color:var(--ink-2);font-size:17px;max-width:36em;margin:0 0 26px}
+h2{font:700 15px var(--body);margin:0 0 10px;color:var(--ink)}
+.scen{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:10px}
+.scen > li > button{width:100%;text-align:left;background:var(--white);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.scen > li > button:hover{border-color:var(--ink)}
+.scen > li > button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 4px 0 0 var(--ink)}
+.scen .n{font:800 18px/1.2 var(--display);color:var(--ink-3)}
+.scen b{display:block;font-weight:600}
+.scen span span{font-size:14px;color:var(--ink-2)}
+.variants{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 38px}
+.variants[hidden]{display:none}
+.vchip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer}
+.vchip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.facts{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:18px}
+.facts p{margin:0;color:var(--ink-2);font-size:15px;max-width:38em}
+.facts ul{margin:6px 0 0;padding-left:18px;color:var(--ink-2);font-size:15px}
+.tasks{background:var(--white);border:1.5px dashed var(--line);border-radius:12px;padding:14px 16px}
+.tasks ol{margin:6px 0 0;padding-left:20px;font-size:15px;color:var(--ink-2)}
+.fine{font-size:13px;color:var(--ink-3)}
+
+/* phone */
+.phone-col{position:sticky;top:18px}
+.phone{width:100%;max-width:390px;margin:0 auto;background:#0F1A28;border-radius:44px;padding:12px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.screen{background:#F7F8F8;border-radius:34px;height:760px;max-height:calc(100vh - 80px);min-height:620px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.sbar{display:flex;justify-content:space-between;padding:12px 24px 6px;font-size:13px;font-weight:600;color:var(--ink)}
+.app-h{display:flex;align-items:center;gap:10px;padding:6px 18px 10px}
+.app-h .back{border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;padding:4px 8px 4px 0}
+.app-h b{font:700 18px var(--body)}
+.app-h .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+.body{flex:1;overflow-y:auto;padding:4px 16px 18px}
+.card{background:#fff;border:1px solid #E1E6E4;border-radius:16px;padding:16px;margin:0 0 12px}
+.card h3{font:700 17px/1.3 var(--body);margin:0 0 6px}
+.card p{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+.card p:last-child{margin-bottom:0}
+.muted{color:var(--ink-3);font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.amt{font:700 22px var(--body);font-variant-numeric:tabular-nums}
+.neg{color:var(--stop)} .pos{color:var(--ok)}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);border:1px solid #F0D49B;border-radius:14px;padding:12px 14px;margin:0 0 12px;cursor:pointer;text-align:left;width:100%}
+.banner .ic{width:22px;height:22px;border-radius:50%;background:var(--orange);color:#3B2600;font-weight:800;display:grid;place-items:center;flex:none;font-size:14px}
+.banner b{display:block;font-size:15px}
+.banner span{font-size:14px;color:var(--ink-2)}
+/* instalment strip */
+.strip{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;margin:10px 0 4px}
+.dot{aspect-ratio:1;border-radius:50%;border:2px solid var(--ink);background:transparent;position:relative}
+.dot.paid{background:var(--ink)}
+.dot.late{background:var(--ink);box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--orange)}
+.dot.miss{border-style:dashed;border-color:var(--stop)}
+.dot.skip{border-style:dashed;border-color:var(--ink-3);background:repeating-linear-gradient(45deg,transparent 0 3px,var(--paper-2) 3px 5px)}
+.dot.now{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--blue)}
+.dot.stopped{border-color:var(--line)}
+.strip-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3)}
+/* timeline */
+.tl{list-style:none;margin:6px 0 0;padding:0}
+.tl li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:0 0 12px;position:relative;font-size:15px}
+.tl li::before{content:"";position:absolute;left:10px;top:20px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl .m{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--ok);color:#fff}
+.tl .m.p{background:#fff;border:2px dashed var(--warn);color:var(--warn)}
+.tl small{display:block;color:var(--ink-3);font-size:13px}
+/* buttons */
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:13px 14px;font-weight:600;font-size:15px;cursor:pointer;text-align:center;margin:0 0 8px}
+.btn.pri{background:var(--ink);color:#fff}
+.btn.sec{background:#fff;border:1.5px solid var(--ink);color:var(--ink)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.txt{background:transparent;color:var(--blue);padding:8px;text-decoration:underline}
+.opt{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;width:100%;text-align:left;background:#fff;border:1.5px solid #D5DCD9;border-radius:14px;padding:13px 14px;margin:0 0 8px;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt b{display:block;font-size:15px}
+.opt span{font-size:13px;color:var(--ink-2)}
+.opt i{font-style:normal;color:var(--ink-3);font-size:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.chip{border:1.5px solid #D5DCD9;background:#fff;border-radius:999px;padding:7px 12px;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+textarea{width:100%;min-height:84px;border:1.5px solid #D5DCD9;border-radius:12px;padding:10px 12px;font:15px/1.45 var(--body);resize:vertical;background:#fff;color:var(--ink)}
+textarea:focus{border-color:var(--ink);outline:none}
+.why{margin-top:6px;font-size:13px}
+.why summary{cursor:pointer;color:var(--ink-2);font-weight:600}
+.why ul{list-style:none;padding:0;margin:8px 0 0}
+.why li{display:grid;grid-template-columns:18px 1fr auto;gap:6px;padding:4px 0;border-bottom:1px solid #EDF0EF}
+.why .pass{color:var(--ok);font-weight:700} .why .fail{color:var(--stop);font-weight:700}
+.note{background:var(--blue-soft);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--ink);margin:0 0 12px}
+.okbox{background:var(--ok-soft);border-radius:14px;padding:14px;margin:0 0 12px}
+.okbox b{display:block;font-size:16px;margin-bottom:2px}
+.sheet-bg{position:absolute;inset:0;background:rgba(15,26,40,.35);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:18px 16px 16px;max-height:85%;overflow:auto}
+.sheet h3{margin:0 0 8px;font:700 18px var(--body)}
+.grip{width:40px;height:4px;border-radius:2px;background:var(--line);margin:-6px auto 12px}
+table.np{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+table.np th,table.np td{text-align:right;padding:6px 4px;border-bottom:1px solid #EDF0EF}
+table.np th:first-child,table.np td:first-child{text-align:left}
+.foot{font-size:12px;color:var(--ink-3);text-align:center;padding:10px 16px 14px;border-top:1px solid #E7EBEA}
+.loading{color:var(--ink-3);font-style:italic;font-size:14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){ .screen-in{animation:slide .22s ease-out} @keyframes slide{from{opacity:.4;transform:translateX(10px)}to{opacity:1;transform:none}} }
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:26px}
+  .phone-col{position:static;order:2}
+  .phone{padding:8px;border-radius:36px}
+  .screen{height:720px;max-height:none}
+}
+@media (max-width:420px){ .phone{background:transparent;padding:0} .screen{border-radius:20px;border:1px solid var(--line)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Month Twelve <small>companion prototype</small></a>
+    <nav aria-label="Pages"><a href="/">Discovery engine</a><a href="#how">How it decides</a></nav>
+  </header>
+
+  <section aria-labelledby="h1">
+    <h1 id="h1">Help at the moment a first SIP is about to lapse</h1>
+    <p class="lede">An in-app companion that shows up when an instalment fails, when someone taps "Stop", or when the portfolio turns red. It explains what happened in plain words and puts the reversible options next to the final one. It never says which fund to buy or whether to stay invested.</p>
+
+    <h2 id="scen-h">Try a scenario</h2>
+    <ul class="scen" aria-labelledby="scen-h">
+      <li><button type="button" data-s="1" aria-pressed="true"><span class="n">1</span><span><b>An instalment didn't go through</b><span>Month 4 of a ₹1,000 SIP. The autopay failed or the money left but units haven't arrived.</span></span></button>
+        <div class="variants" id="v1" role="group" aria-label="What went wrong">
+          <button type="button" class="vchip" data-v="balance" aria-pressed="true">Not enough balance</button>
+          <button type="button" class="vchip" data-v="mandate">Autopay not active</button>
+          <button type="button" class="vchip" data-v="pending">Debited, units pending</button>
+        </div></li>
+      <li><button type="button" data-s="2" aria-pressed="false"><span class="n">2</span><span><b>Money is tight, so they tap Stop</b><span>Month 6. They head to cancel. What do they see first?</span></span></button></li>
+      <li><button type="button" data-s="3" aria-pressed="false"><span class="n">3</span><span><b>The portfolio is in the red</b><span>Month 6, down about 6%. They want to know what that means.</span></span></button></li>
+    </ul>
+
+    <div class="facts">
+      <div class="tasks">
+        <h2>For user testing</h2>
+        <ol>
+          <li>Scenario 1: find out why your November instalment failed and sort it out.</li>
+          <li>Scenario 2: you're short this month. Do what you'd really do.</li>
+          <li>Scenario 3: work out whether you've lost money.</li>
+        </ol>
+        <p class="fine" style="margin-top:8px">Taps are logged anonymously (scenario, button, time) so tests produce numbers. Nothing you type is stored beyond 300 characters, and never with your name.</p>
+      </div>
+
+      <div id="why-data">
+        <h2>Why these three moments</h2>
+        <p id="data-line" class="loading">Loading what the discovery engine found…</p>
+      </div>
+
+      <div id="how">
+        <h2>How it decides</h2>
+        <ul>
+          <li><b>Rules first.</b> A failed instalment shows the bank's reason code in plain words. No AI is needed for facts the app already has.</li>
+          <li><b>AI only for free text.</b> When someone explains in their own words, the discovery engine matches it to a pattern. Four checks must pass (on-topic, close match, real SIP story, agreement) before it picks a card.</li>
+          <li><b>Safe fallback.</b> If any check fails, it shows every option instead of guessing. You can open "How we picked this" on any answer.</li>
+          <li><b>Measured.</b> On 22 hand-labelled posts it had never seen, it confidently showed a specific help card 9 times and 7 were the right one. The 2 misses sent a fund question to the numbers explainer and a stock-trading complaint to payment help. The other 13 posts got "which is closer?" or the full menu. None of the cards contain advice, so a wrong card costs a tap, not a bad decision.</li>
+        </ul>
+      </div>
+      <p class="fine">Independent student prototype. Not affiliated with Groww or any app. All amounts are examples. Nothing here is investment advice; for advice on a personal situation, speak to a <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13" target="_blank" rel="noopener">SEBI-registered investment adviser</a>.</p>
+    </div>
+  </section>
+
+  <div class="phone-col">
+    <div class="phone" role="region" aria-label="Prototype app screen">
+      <div class="screen" id="screen">
+        <div class="sbar" aria-hidden="true"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="app-h" id="apph"></div>
+        <div class="body" id="body" aria-live="polite"></div>
+        <div class="foot">Prototype · example numbers · not investment advice</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ENGINE = "https://bjkahdznnvvotpenkjio.supabase.co/functions/v1/engine";
+const LOG = "https://bjkahdznnvvotpenkjio.supabase.co/functions/v1/mvp-log";
+const SESSION = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)).slice(0, 36);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rupee = n => "₹" + Number(n).toLocaleString("en-IN");
+let S = { scen: 1, variant: "balance", stack: [], strip: [], t0: Date.now() };
+
+function log(event, detail) {
+  try { fetch(LOG, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ session: SESSION, scenario: "s" + S.scen + (S.scen === 1 ? "-" + S.variant : ""), event, detail: { ...(detail || {}), ms: Date.now() - S.t0 } }), keepalive: true }).catch(() => {}); } catch (_) {}
+}
+
+/* ---------- instalment strip ---------- */
+function stripHTML(states, label) {
+  const names = { paid: "paid", late: "paid late", miss: "missed", skip: "skipped", now: "due now", stopped: "stopped", "": "upcoming" };
+  const desc = states.map((s, i) => `Month ${i + 1}: ${names[s.split(" ")[0]] || "upcoming"}`).join(", ");
+  return `<div class="strip" role="img" aria-label="${esc(label || "Your 12 instalments")}. ${esc(desc)}">${states.map(s => `<span class="dot ${s}"></span>`).join("")}</div><div class="strip-cap" aria-hidden="true"><span>Month 1</span><span>Month 12</span></div>`;
+}
+
+/* ---------- screen plumbing ---------- */
+function render(title, html, opts = {}) {
+  const canBack = S.stack.length > 0 && !opts.root;
+  $("#apph").innerHTML = `${canBack ? `<button class="back" aria-label="Back" data-act="back">←</button>` : ""}<b>${esc(title)}</b><span class="tag">Prototype</span>`;
+  const b = $("#body"); b.innerHTML = html; b.classList.remove("screen-in"); void b.offsetWidth; b.classList.add("screen-in"); b.scrollTop = 0;
+  closeSheet();
+}
+function go(fn, ...args) { S.stack.push(S.cur); S.cur = [fn, args]; fn(...args); }
+function back() { const p = S.stack.pop(); if (p) { S.cur = p; p[0](...p[1]); log("back"); } }
+function sheet(html) {
+  closeSheet();
+  const bg = document.createElement("div"); bg.className = "sheet-bg"; bg.id = "sheet";
+  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grip"></div>${html}</div>`;
+  bg.addEventListener("click", e => { if (e.target === bg) closeSheet(); });
+  $("#screen").appendChild(bg); bg.querySelector("button")?.focus();
+}
+function closeSheet() { $("#sheet")?.remove(); }
+
+/* ---------- scenario 1: failed instalment ---------- */
+const REASON = {
+  balance: { title: "Your bank declined the autopay", what: "There wasn't enough balance in your account on 5 Nov, so the bank declined the ₹1,000 debit.", money: "No money left your account.", fix: "pay" },
+  mandate: { title: "Your autopay isn't active", what: "The autopay mandate linked to this SIP isn't active at your bank, so no debit was attempted on 5 Nov.", money: "No money left your account.", fix: "mandate" },
+  pending: { title: "Money left, units are on the way", what: "₹1,000 left your account on 5 Nov and has been sent to the fund house. Units haven't been added yet.", money: "Your money is not lost. It is either turned into units or returned to your bank.", fix: "track" }
+};
+function home1() {
+  S.cur = [home1, []]; S.stack = [];
+  S.paidMonths = S.variant === "pending" ? 4 : 3; S.invested = S.paidMonths * 1000;
+  S.strip = ["paid", "paid", "paid", S.variant === "pending" ? "now" : "miss now", "", "", "", "", "", "", "", ""];
+  const r = REASON[S.variant];
+  render("Investments", `
+    <button class="banner" data-act="open-rescue"><span class="ic" aria-hidden="true">!</span><span><b>${S.variant === "pending" ? "Your November units are still on the way" : "Your November instalment didn't go through"}</b><span>See what happened and your options</span></span></button>
+    ${sipCard(4)}
+    <div class="card"><div class="row"><span class="muted">Invested so far</span><span class="amt">${rupee(S.invested)}</span></div></div>`, { root: true });
+  log("view_home");
+}
+function sipCard(month, extra) {
+  return `<div class="card"><div class="row"><div><h3 style="margin:0">Large-cap index fund</h3><div class="muted">Example fund · ₹1,000 every month on the 5th</div></div></div>
+    ${stripHTML(S.strip, "Your 12 instalments")}<p class="muted" style="margin-top:6px">Month ${month} of your first year${extra ? " · " + extra : ""}</p></div>`;
+}
+function rescue() {
+  const r = REASON[S.variant];
+  let body = `<div class="card"><h3>${esc(r.title)}</h3><p>${esc(r.what)}</p><p><b>${esc(r.money)}</b></p>
+    ${S.variant === "pending" ? `<ul class="tl">
+      <li><span class="m">✓</span><span>Debited from your bank<small>5 Nov, 10:02</small></span></li>
+      <li><span class="m">✓</span><span>Sent to the fund house<small>5 Nov, 14:30</small></span></li>
+      <li><span class="m p">…</span><span>Units added to your account<small>Usually within 1–2 working days. We'll notify you.</small></span></li></ul>` : ""}
+    </div>
+    <div class="note">Your SIP is still active. One missed month doesn't cancel it.</div>`;
+  if (r.fix === "pay") body += `<h2 style="font-size:15px;margin:14px 2px 8px">What would you like to do?</h2>
+    ${opt("pay", "Pay this instalment now", "₹1,000 by UPI. November counts as paid.")}
+    ${opt("skip", "Skip November", "Nothing to pay now. Your SIP continues on 5 Dec.")}
+    ${opt("date", "Move the date for future months", "e.g. a few days after your salary arrives")}`;
+  if (r.fix === "mandate") body += `<h2 style="font-size:15px;margin:14px 2px 8px">What would you like to do?</h2>
+    ${opt("mandate", "Set up autopay again", "Takes about 2 minutes with UPI or net banking")}
+    ${opt("pay", "Pay November now", "₹1,000 by UPI, then fix autopay later")}
+    ${opt("skip", "Skip November", "Your SIP continues on 5 Dec")}`;
+  if (r.fix === "track") body += `${opt("notify", "Notify me when units arrive", "We'll send one notification. No action needed from you.")}
+    ${opt("ticket", "It's been more than 3 working days", "Raise a support ticket with all details filled in")}`;
+  body += `<button class="btn txt" data-act="to-stop">I want to stop this SIP</button>`;
+  render("November instalment", body);
+  log("view_rescue", { variant: S.variant });
+}
+function opt(act, title, sub) { return `<button class="opt" data-act="opt" data-opt="${act}"><span><b>${esc(title)}</b><span>${esc(sub)}</span></span><i aria-hidden="true">›</i></button>`; }
+
+function doOpt(o) {
+  log("choose", { option: o });
+  if (o === "pay") return sheet(`<h3>Pay ₹1,000 for November</h3><p class="muted">Simulated UPI payment. No real money moves in this prototype.</p>
+      <button class="btn pri" data-act="confirm-pay">Pay ₹1,000</button><button class="btn ghost" data-act="close">Cancel</button>`);
+  if (o === "skip") return sheet(`<h3>Skip November?</h3><p>Nothing will be debited this month. Your next instalment is on 5 Dec, same amount.</p>
+      <button class="btn pri" data-act="confirm-skip">Skip November</button><button class="btn ghost" data-act="close">Go back</button>`);
+  if (o === "date") return sheet(`<h3>Pick a new date</h3><p class="muted">For December onwards. Pick a day when your account usually has money.</p>
+      <div class="chips" role="group" aria-label="New date">${[1, 3, 7, 10, 15, 20, 25].map(d => `<button class="chip" data-act="pick-date" data-d="${d}">${d}${d === 1 ? "st" : d === 3 ? "rd" : "th"}</button>`).join("")}</div>
+      <button class="btn ghost" data-act="close">Cancel</button>`);
+  if (o === "mandate") return sheet(`<h3>Set up autopay</h3><p>You'd approve a new autopay in your UPI app or net banking. Simulated here.</p>
+      <button class="btn pri" data-act="confirm-mandate">Approve autopay</button><button class="btn ghost" data-act="close">Cancel</button>`);
+  if (o === "notify") return done("You'll get one notification", "We'll tell you when the November units are added. Nothing else to do.", "notify");
+  if (o === "ticket") return done("Ticket raised: #48213", "We've sent the debit time, amount and fund to support. You'll see replies here, and it stays open until it's resolved.", "ticket");
+  if (o === "explain") return go(explainNumbers);
+  if (o === "flex") return go(flexOptions);
+  if (o === "payhelp") { S.variant = "pending"; return go(rescue); }
+  if (o === "funds") return go(aboutFunds);
+  if (o === "stop") return stopConfirm();
+  if (o === "menu") return go(fallbackMenu, S.lastEngine, null);
+  if (o === "edit-date") return doOpt("date");
+  if (o === "skip-next") return sheet(`<h3>Skip the next instalment?</h3><p>Nothing will be debited on 5 Dec. Your SIP stays active and resumes on 5 Jan.</p>
+      <button class="btn pri" data-act="confirm-skipnext">Skip 5 Dec</button><button class="btn ghost" data-act="close">Go back</button>`);
+  if (o === "edit-amt") return sheet(`<h3>Change the amount</h3><p class="muted">From the next instalment. Change it again any time.</p>
+      <div class="chips" role="group" aria-label="New amount">${[500, 750, 1000, 1500, 2000].map(a => `<button class="chip" data-act="pick-amt" data-a="${a}">₹${a.toLocaleString("en-IN")}</button>`).join("")}</div>
+      <button class="btn ghost" data-act="close">Cancel</button>`);
+}
+function done(title, text, kind) {
+  if (kind === "pay") S.strip[3] = "late";
+  if (kind === "skip") S.strip[3] = "skip";
+  render("Done", `<div class="okbox"><b>${esc(title)}</b>${esc(text)}</div>${S.scen === 1 ? sipCard(4) : ""}
+    <button class="btn sec" data-act="restart">Back to start</button>`);
+  log("done", { kind });
+}
+
+/* ---------- scenario 2: stop flow ---------- */
+const REASONS = [
+  ["life", "Money is tight right now"], ["pay", "Payments keep failing"], ["returns", "Returns look bad"],
+  ["funds", "Not sure about this fund"], ["numbers", "I don't understand the numbers"], ["other", "Something else"]];
+function home2() {
+  S.cur = [home2, []]; S.stack = [];
+  S.paidMonths = 5; S.invested = 5000;
+  S.strip = ["paid", "paid", "paid", "paid", "paid", "now", "", "", "", "", "", ""];
+  render("Investments", `${sipCard(6, "next instalment 5 Dec")}
+    <div class="card"><div class="row"><span class="muted">Invested so far</span><span class="amt">${rupee(S.invested)}</span></div></div>
+    <button class="btn sec" data-act="manage">Manage SIP</button>`, { root: true });
+  log("view_home");
+}
+function manage() {
+  render("Manage SIP", `<div class="card"><h3>Large-cap index fund</h3><p class="muted">₹1,000 · every month on the 5th</p></div>
+    ${opt("edit-amt", "Change amount", "Increase or lower it")}${opt("edit-date", "Change date", "Pick a different day")}
+    ${opt("skip-next", "Skip next instalment", "Your SIP stays active")}
+    <button class="opt" data-act="stop-start"><span><b>Stop SIP</b><span>End future instalments</span></span><i aria-hidden="true">›</i></button>`);
+  log("view_manage");
+}
+function stopReason() {
+  render("Stop SIP", `<div class="card"><h3>Before you stop: what's going on?</h3><p>Optional. It helps us show the options that fit. You can stop on the next screen either way.</p>
+    <div class="chips" role="group" aria-label="Reason">${REASONS.map(([k, t]) => `<button class="chip" data-act="reason" data-k="${k}" aria-pressed="false">${t}</button>`).join("")}</div>
+    <label for="free" class="muted">Or say it in your own words (English or Hinglish)</label>
+    <textarea id="free" maxlength="600" placeholder="e.g. rent went up this month, can't do 1000"></textarea>
+    <p class="muted">Don't include account numbers or PAN.</p></div>
+    <button class="btn pri" data-act="reason-go">Continue</button>
+    <button class="btn txt" data-act="skip-reason">Skip and stop now</button>`);
+  log("view_stop_reason");
+}
+async function reasonGo() {
+  const picked = document.querySelector('.chip[data-act="reason"][aria-pressed="true"]')?.dataset.k;
+  const text = ($("#free")?.value || "").trim();
+  log("reason_submit", { chip: picked || null, typed: text.length > 0 });
+  if (text.length >= 10) {
+    render("Stop SIP", `<p class="loading">Reading what you wrote…</p>`);
+    try {
+      const r = await fetch(ENGINE, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "classify", text }) });
+      const j = await r.json();
+      log("engine", { status: j.status, family: j.family?.[0]?.code || null, share: j.family?.[0]?.share ?? null });
+      return go(routeFromEngine, j, picked);
+    } catch (e) { log("engine_error"); return go(fallbackMenu, null, "We couldn't reach the matching service."); }
+  }
+  const map = { life: "flex", pay: "payhelp", returns: "explain", numbers: "explain", funds: "funds" };
+  if (picked && map[picked]) return doOpt(map[picked]);
+  return go(fallbackMenu, null, picked === "other" ? "" : null);
+}
+const CARD = { platform_failure: "payhelp", life_cashflow: "flex", no_flexibility: "flex", returns_doubt: "explain", numbers_confusion: "explain", choice_doubt: "funds" };
+const CARDNAME = { payhelp: "Sort out a payment problem", flex: "Keep it running for less, or later", explain: "Understand your numbers", funds: "Questions about the fund" };
+function checksHTML(j) {
+  if (!j || !j.checks || !j.checks.length) return "";
+  return `<details class="why"><summary>How we picked this</summary><ul>${j.checks.map(c => `<li><span class="${c.pass ? "pass" : "fail"}" aria-hidden="true">${c.pass ? "✓" : "✕"}</span><span>${esc(c.label)}<span class="sr">${c.pass ? " passed" : " failed"}</span></span><span class="muted">${c.value}</span></li>`).join("")}</ul>
+    <p class="muted" style="margin-top:6px">Matched against hand-labelled public posts. If any check fails, you see every option instead.</p></details>`;
+}
+function routeFromEngine(j, picked) {
+  const top = j.family?.[0]?.code, second = j.family?.[1];
+  if (j.status === "classified" && CARD[top]) { S.lastEngine = j; return doOptInto(CARD[top], j); }
+  if (j.status === "uncertain" && CARD[top]) {
+    const cands = [CARD[top]]; if (second && CARD[second.code] && CARD[second.code] !== CARD[top]) cands.push(CARD[second.code]);
+    render("Stop SIP", `<div class="card"><h3>Which is closer?</h3><p>We weren't sure from what you wrote, so pick the one that fits.</p>
+      ${cands.map(c => opt(c, CARDNAME[c], "")).join("")}${opt("menu", "Neither of these", "See all options")}${checksHTML(j)}</div>`);
+    return log("view_uncertain", { cands });
+  }
+  const msg = j.status === "abstain_language" ? j.message : j.status === "blocked_pii" ? j.message : null;
+  return fallbackMenu(j, msg);
+}
+function doOptInto(card, j) {
+  S.lastEngine = j;
+  ({ flex: flexOptions, explain: explainNumbers, funds: aboutFunds, payhelp: () => { S.variant = "pending"; rescue(); } })[card]();
+}
+function fallbackMenu(j, msg) {
+  render("Stop SIP", `<div class="card"><h3>Here are all your options</h3><p>${msg ? esc(msg) : "We couldn't match that confidently, so we're not guessing."}</p>
+    ${opt("flex", CARDNAME.flex, "Skip a month, lower the amount, or change the date")}
+    ${opt("payhelp", CARDNAME.payhelp, "Failed or pending instalments")}
+    ${opt("explain", CARDNAME.explain, "What invested, current value and returns mean")}
+    ${opt("funds", CARDNAME.funds, "We don't recommend funds, but here's what to look at")}
+    ${checksHTML(j)}</div>
+    <button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`);
+  log("view_fallback", { status: j?.status || null });
+}
+function flexOptions() {
+  render("Options", `<div class="card"><h3>Ways to keep it running for less, or later</h3><p>Each can be undone. Your ${rupee(S.invested)} already invested stays invested whatever you choose.</p></div>
+    ${opt("x-skip", "Skip December", "Nothing debited next month. Resumes on 5 Jan.")}
+    ${opt("x-lower", "Lower it to ₹500 for now", "Raise it again whenever you like")}
+    ${opt("x-date", "Move the date", "e.g. after your salary or stipend arrives")}
+    ${S.lastEngine ? checksHTML(S.lastEngine) : ""}
+    <button class="btn ghost" data-act="opt" data-opt="stop" style="margin-top:6px">Stop SIP instead</button>`);
+  log("view_flex");
+}
+function stopConfirm() {
+  sheet(`<h3>Stop this SIP?</h3><p>Future instalments end. The ${rupee(S.invested)} you've already invested stays in the fund, and you can restart any time.</p>
+    <button class="btn pri" data-act="confirm-stop">Stop SIP</button><button class="btn ghost" data-act="close">Go back</button>`);
+  log("view_stop_confirm");
+}
+
+/* ---------- scenario 3: red portfolio ---------- */
+const NAVS = [ [1000, 52.10], [1000, 54.80], [1000, 55.60], [1000, 51.90], [1000, 50.40], [1000, 49.30] ];
+function units() { return NAVS.reduce((s, [a, n]) => s + a / n, 0); }
+function home3() {
+  S.cur = [home3, []]; S.stack = [];
+  S.paidMonths = 6; S.invested = 6000;
+  S.strip = ["paid", "paid", "paid", "paid", "paid", "paid", "", "", "", "", "", ""];
+  const inv = 6000, cur = Math.round(units() * 49.20);
+  render("Investments", `<div class="card"><div class="muted">Current value</div><div class="row"><span class="amt">${rupee(cur)}</span><span class="neg" style="font-weight:700">${(((cur - inv) / inv) * 100).toFixed(1)}%</span></div>
+    <div class="muted">Invested ${rupee(inv)}</div></div>${sipCard(6)}
+    <button class="btn sec" data-act="opt" data-opt="explain">Why is it red?</button>`, { root: true });
+  log("view_home");
+}
+function explainNumbers() {
+  const navs = NAVS.slice(0, S.paidMonths || 6);
+  const u = navs.reduce((s, [a, n]) => s + a / n, 0), inv = navs.length * 1000, cur = Math.round(u * 49.20);
+  const gap = cur - inv;
+  render("Your numbers", `<div class="card"><h3>What ${gap < 0 ? "the red number" : "your number"} means</h3>
+    <p>You've put in <b>${rupee(inv)}</b> over ${navs.length} months and now own <b>${u.toFixed(2)} units</b>. Each unit is priced at ₹49.20 today, so they're worth <b>${rupee(cur)}</b>.</p>
+    <p>The number of units you own hasn't gone down. Their price has moved. ${gap < 0 ? "The red shows" : "The figure shows"} the gap between what you paid and today's price.</p></div>
+    <div class="card"><h3>What each instalment bought</h3>
+      <table class="np"><thead><tr><th>Month</th><th>Price/unit</th><th>Units</th></tr></thead><tbody>
+      ${navs.map(([a, n], i) => `<tr><td>${i + 1}</td><td>₹${n.toFixed(2)}</td><td>${(a / n).toFixed(2)}</td></tr>`).join("")}</tbody></table>
+      <p class="muted" style="margin-top:8px">Lower prices buy more units for the same ₹1,000. That's how a SIP spreads purchases over time. It says nothing about where prices go next.</p></div>
+    <div class="note">We can't tell you whether to continue. That depends on your goals and situation. A <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13" target="_blank" rel="noopener">SEBI-registered adviser</a> can.</div>
+    ${S.lastEngine ? checksHTML(S.lastEngine) : ""}
+    ${S.scen === 3 ? `<button class="btn sec" data-act="ask">Ask something else</button><button class="btn txt" data-act="manage3">Manage SIP</button>` : `<button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`}`);
+  log("view_explain");
+}
+function ask3() {
+  render("Ask", `<div class="card"><h3>What's on your mind?</h3><p>In your own words. We'll show the help that fits, or every option if we're not sure.</p>
+    <label for="free" class="sr">Your question</label><textarea id="free" maxlength="600" placeholder="e.g. is my SIP broken? it was green last month"></textarea>
+    <p class="muted">Don't include account numbers or PAN.</p></div><button class="btn pri" data-act="reason-go">Continue</button>`);
+  log("view_ask");
+}
+function aboutFunds() {
+  render("About the fund", `<div class="card"><h3>We don't recommend funds</h3><p>Choosing or switching funds is a personal decision. These are the facts people usually compare:</p>
+    <ul style="margin:0 0 10px;padding-left:18px;color:var(--ink-2);font-size:15px"><li>The fund's category and what it invests in</li><li>Its expense ratio (yearly cost)</li><li>How long you plan to stay invested</li><li>Exit load if you sell early</li></ul>
+    <p>For a personal recommendation, speak to a <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13" target="_blank" rel="noopener">SEBI-registered investment adviser</a>.</p></div>
+    ${S.lastEngine ? checksHTML(S.lastEngine) : ""}<button class="btn sec" data-act="restart">Back to start</button>`);
+  log("view_funds");
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const a = b.dataset.act;
+  if (a === "back") return back();
+  if (a === "close") { closeSheet(); return log("sheet_close"); }
+  if (a === "open-rescue") return go(rescue);
+  if (a === "opt") return doOpt(b.dataset.opt);
+  if (a === "confirm-pay") return done("November paid", "₹1,000 received. Units will be added at the next price. Your SIP is on track.", "pay");
+  if (a === "confirm-skip") return done("November skipped", "Nothing debited. Your SIP continues on 5 Dec.", "skip");
+  if (a === "confirm-mandate") return done("Autopay is active", "Future instalments will be debited on the 5th. November is still unpaid. Pay it now or skip it from the SIP page.", "mandate");
+  if (a === "pick-date") { log("choose_date", { day: +b.dataset.d }); return done(`Date changed to the ${b.textContent}`, `From December, instalments will be on the ${b.textContent}.`, "date"); }
+  if (a === "to-stop" || a === "stop-start") return go(stopReason);
+  if (a === "manage" || a === "manage3") return go(manage);
+  if (a === "reason") { const on = b.getAttribute("aria-pressed") === "true"; document.querySelectorAll('.chip[data-act="reason"]').forEach(c => c.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", String(!on)); return; }
+  if (a === "reason-go") return reasonGo();
+  if (a === "skip-reason") { log("skip_reason"); return stopConfirm(); }
+  if (a === "confirm-stop") { S.strip = S.strip.map(s => s.startsWith("now") || s === "" ? "stopped" : s); return done("SIP stopped", "No more instalments will be debited. Your invested money stays in the fund. Restart any time from this page.", "stop"); }
+  if (a === "ask") return go(ask3);
+  if (a === "confirm-skipnext") return done("5 Dec skipped", "Your SIP stays active and resumes on 5 Jan.", "skip-next");
+  if (a === "pick-amt") { log("choose_amount", { amount: +b.dataset.a }); return done(`Amount changed to ${b.textContent}`, "From the next instalment. Your money already invested is unchanged.", "amount"); }
+  if (a === "restart") return start(S.scen);
+});
+document.addEventListener("click", e => {
+  const o = e.target.closest('.opt[data-opt^="x-"]'); if (!o) return;
+  const k = o.dataset.opt; e.stopImmediatePropagation();
+  if (k === "x-skip") return done("December skipped", "Your SIP stays active and resumes on 5 Jan.", "flex-skip");
+  if (k === "x-lower") return done("Lowered to ₹500", "From December. Change it back any time.", "flex-lower");
+  if (k === "x-date") { S.scen = 2; return doOpt("date"); }
+}, true);
+document.querySelectorAll(".scen > li > button").forEach(b => b.addEventListener("click", () => start(+b.dataset.s)));
+document.querySelectorAll("#v1 .vchip").forEach(b => b.addEventListener("click", () => { S.variant = b.dataset.v; document.querySelectorAll("#v1 .vchip").forEach(x => x.setAttribute("aria-pressed", String(x === b))); start(1); }));
+function start(n) {
+  S.scen = n; S.t0 = Date.now(); S.lastEngine = null;
+  document.querySelectorAll(".scen > li > button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === n)));
+  $("#v1").hidden = n !== 1;
+  log("scenario_start");
+  ({ 1: home1, 2: home2, 3: home3 })[n]();
+}
+
+/* ---------- live data line ---------- */
+(async () => {
+  try {
+    const s = await (await fetch(ENGINE)).json();
+    const g = (s.groups || []).filter(x => x.group === "stopped_or_wavering");
+    const tot = g.reduce((a, x) => a + x.n, 0), pf = g.find(x => x.family === "platform_failure")?.n || 0, lc = g.filter(x => ["life_cashflow", "no_flexibility"].includes(x.family)).reduce((a, x) => a + x.n, 0), rd = g.filter(x => ["returns_doubt", "numbers_confusion"].includes(x.family)).reduce((a, x) => a + x.n, 0);
+    $("#data-line").className = "";
+    $("#data-line").innerHTML = `In ${tot} hand-labelled public posts from people who stopped, paused or nearly stopped, <b>${pf}</b> were set off by a payment going wrong, <b>${rd}</b> by returns or confusing numbers, and <b>${lc}</b> by money being tight or the SIP being hard to change. These posts lean towards complaints, so interviews are checking the order. <a href="/">See the discovery engine</a>.`;
+  } catch (_) { $("#data-line").textContent = "The discovery engine's numbers couldn't load right now."; }
+})();
+start(1);
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+Anonymous interaction log for the companion prototype: random session id, scenario, event name, small detail object. No names or contact details; free-text-like details over 600 chars or matching PAN/account patterns are dropped. Deployed as edge function `mvp-log`; source kept in Supabase.

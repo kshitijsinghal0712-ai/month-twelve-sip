@@ -170,6 +170,7 @@ table.np th:first-child,table.np td:first-child{text-align:left}
       <div id="why-data">
         <h2>Why these three moments</h2>
         <p id="data-line" class="loading">Loading what the discovery engine found…</p>
+        <p style="margin-top:10px">A survey of 21 investors describing their first SIP pointed the same way for scenario 3: 4 of the 6 who check weekly or more had thought about stopping, against 4 of the 15 who check monthly or less. Investors who stayed past year one mostly look at what they own, or don't look at all.</p>
       </div>
 
       <div id="how">
@@ -300,6 +301,8 @@ function doOpt(o) {
   if (o === "funds") return go(aboutFunds);
   if (o === "stop") return stopConfirm();
   if (o === "menu") return go(fallbackMenu, S.lastEngine, null);
+  if (o === "view-own") { S.view = "own"; return done("Showing what you own first", "Your home screen now leads with units and the amount invested. Returns are still shown, just not first. Change it back any time.", "view-own"); }
+  if (o === "view-monthly") { S.monthly = true; return done("Returns summary set to monthly", "You'll get one summary after each instalment instead of a live number. The live value is always one tap away.", "view-monthly"); }
   if (o === "edit-date") return doOpt("date");
   if (o === "skip-next") return sheet(`<h3>Skip the next instalment?</h3><p>Nothing will be debited on 5 Dec. Your SIP stays active and resumes on 5 Jan.</p>
       <button class="btn pri" data-act="confirm-skipnext">Skip 5 Dec</button><button class="btn ghost" data-act="close">Go back</button>`);
@@ -311,7 +314,7 @@ function done(title, text, kind) {
   if (kind === "pay") S.strip[3] = "late";
   if (kind === "skip") S.strip[3] = "skip";
   render("Done", `<div class="okbox"><b>${esc(title)}</b>${esc(text)}</div>${S.scen === 1 ? sipCard(4) : ""}
-    <button class="btn sec" data-act="restart">Back to start</button>`);
+    <button class="btn sec" data-act="${kind && kind.startsWith("view-") ? "home" : "restart"}">${kind && kind.startsWith("view-") ? "See my home screen" : "Back to start"}</button>`);
   log("done", { kind });
 }
 
@@ -418,10 +421,14 @@ function home3() {
   S.cur = [home3, []]; S.stack = [];
   S.paidMonths = 6; S.invested = 6000;
   S.strip = ["paid", "paid", "paid", "paid", "paid", "paid", "", "", "", "", "", ""];
-  const inv = 6000, cur = Math.round(units() * 49.20);
-  render("Investments", `<div class="card"><div class="muted">Current value</div><div class="row"><span class="amt">${rupee(cur)}</span><span class="neg" style="font-weight:700">${(((cur - inv) / inv) * 100).toFixed(1)}%</span></div>
-    <div class="muted">Invested ${rupee(inv)}</div></div>${sipCard(6)}
-    <button class="btn sec" data-act="opt" data-opt="explain">Why is it red?</button>`, { root: true });
+  const inv = 6000, cur = Math.round(units() * 49.20), pct = (((cur - inv) / inv) * 100).toFixed(1);
+  const top = S.view === "own"
+    ? `<div class="card"><div class="muted">What you own</div><div class="row"><span class="amt">${units().toFixed(2)} units</span></div>
+       <div class="muted">${rupee(inv)} invested over 6 months · value today ${rupee(cur)} (${pct}%)</div></div>`
+    : `<div class="card"><div class="muted">Current value</div><div class="row"><span class="amt">${rupee(cur)}</span><span class="neg" style="font-weight:700">${pct}%</span></div>
+       <div class="muted">Invested ${rupee(inv)}</div></div>`;
+  render("Investments", `${S.monthly ? `<div class="note">Returns summary: next one on 5 Dec, after your instalment. Live value is still one tap away.</div>` : ""}${top}${sipCard(6)}
+    <button class="btn sec" data-act="opt" data-opt="explain">${S.view === "own" ? "What does the value mean?" : "Why is it red?"}</button>`, { root: true });
   log("view_home");
 }
 function explainNumbers() {
@@ -437,7 +444,10 @@ function explainNumbers() {
       <p class="muted" style="margin-top:8px">Lower prices buy more units for the same ₹1,000. That's how a SIP spreads purchases over time. It says nothing about where prices go next.</p></div>
     <div class="note">We can't tell you whether to continue. That depends on your goals and situation. A <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13" target="_blank" rel="noopener">SEBI-registered adviser</a> can.</div>
     ${S.lastEngine ? checksHTML(S.lastEngine) : ""}
-    ${S.scen === 3 ? `<button class="btn sec" data-act="ask">Ask something else</button><button class="btn txt" data-act="manage3">Manage SIP</button>` : `<button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`}`);
+    ${S.scen === 3 ? `<div class="card"><h3>Choose how your SIP shows up</h3><p>People who stayed past their first year mostly look at what they own, and check less often. Both settings can be switched back any time.</p>
+      ${opt("view-own", "Lead with what I own", "Units and amount invested first, returns one tap away")}
+      ${opt("view-monthly", "Show returns once a month", "A summary after each instalment instead of a live number")}</div>
+      <button class="btn sec" data-act="ask">Ask something else</button><button class="btn txt" data-act="manage3">Manage SIP</button>` : `<button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`}`);
   log("view_explain");
 }
 function ask3() {
@@ -476,6 +486,7 @@ document.addEventListener("click", e => {
   if (a === "confirm-skipnext") return done("5 Dec skipped", "Your SIP stays active and resumes on 5 Jan.", "skip-next");
   if (a === "pick-amt") { log("choose_amount", { amount: +b.dataset.a }); return done(`Amount changed to ${b.textContent}`, "From the next instalment. Your money already invested is unchanged.", "amount"); }
   if (a === "restart") return start(S.scen);
+  if (a === "home") { log("view_home_after_setting"); return home3(); }
 });
 document.addEventListener("click", e => {
   const o = e.target.closest('.opt[data-opt^="x-"]'); if (!o) return;
@@ -487,7 +498,7 @@ document.addEventListener("click", e => {
 document.querySelectorAll(".scen > li > button").forEach(b => b.addEventListener("click", () => start(+b.dataset.s)));
 document.querySelectorAll("#v1 .vchip").forEach(b => b.addEventListener("click", () => { S.variant = b.dataset.v; document.querySelectorAll("#v1 .vchip").forEach(x => x.setAttribute("aria-pressed", String(x === b))); start(1); }));
 function start(n) {
-  S.scen = n; S.t0 = Date.now(); S.lastEngine = null; S.lastText = "";
+  S.scen = n; S.t0 = Date.now(); S.lastEngine = null; S.lastText = ""; S.view = null; S.monthly = false;
   document.querySelectorAll(".scen > li > button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === n)));
   $("#v1").hidden = n !== 1;
   log("scenario_start");

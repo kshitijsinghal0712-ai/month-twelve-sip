@@ -122,6 +122,23 @@ table.np th,table.np td{text-align:right;padding:6px 4px;border-bottom:1px solid
 table.np th:first-child,table.np td:first-child{text-align:left}
 .foot{font-size:12px;color:var(--ink-3);text-align:center;padding:10px 16px 14px;border-top:1px solid #E7EBEA}
 .loading{color:var(--ink-3);font-style:italic;font-size:14px}
+.askbar{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:1.5px solid var(--ink);border-radius:999px;padding:11px 16px;margin:4px 0 12px;cursor:pointer;font-weight:600;font-size:15px;text-align:left}
+.askbar .dotai{width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:12px;flex:none}
+.chat{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
+.msg{max-width:88%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.45}
+.msg.me{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:#fff;border:1px solid #E1E6E4;border-bottom-left-radius:4px}
+.msg.bot p{margin:0 0 6px}.msg.bot p:last-child{margin:0}
+.msg .src{font-size:12px;color:var(--ink-3);margin-top:6px}
+.msg .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.msg .acts button{border:1.5px solid var(--ink);background:#fff;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.typing{align-self:flex-start;color:var(--ink-3);font-size:14px;padding:8px 12px}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.sugg button{border:1.5px solid #D5DCD9;background:#fff;border-radius:999px;padding:6px 11px;font-size:13px;cursor:pointer;text-align:left}
+.composer{display:flex;gap:8px;padding:8px 0 0;border-top:1px solid #E7EBEA;margin-top:6px;position:sticky;bottom:0;background:#F7F8F8}
+.composer input{flex:1;min-width:0;border:1.5px solid #D5DCD9;border-radius:999px;padding:10px 14px;font:15px var(--body);background:#fff;color:var(--ink)}
+.composer input:focus{border-color:var(--ink);outline:none}
+.composer button{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:0 16px;font-weight:600;cursor:pointer}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-reduced-motion:no-preference){ .screen-in{animation:slide .22s ease-out} @keyframes slide{from{opacity:.4;transform:translateX(10px)}to{opacity:1;transform:none}} }
 @media (max-width:900px){
@@ -178,6 +195,7 @@ table.np th:first-child,table.np td:first-child{text-align:left}
         <ul>
           <li><b>Rules first.</b> A failed instalment shows the bank's reason code in plain words. No AI is needed for facts the app already has.</li>
           <li><b>AI only for free text.</b> When someone explains in their own words, the discovery engine matches it to a pattern. Four checks must pass (on-topic, close match, real SIP story, agreement) before it picks a card.</li>
+          <li><b>Ask in your own words.</b> “Ask about this SIP” matches a question to a checked list of 17 answers, tailored to your SIP. It never writes new text. On 20 new test questions it answered 15 (14 right), asked “which do you mean?” 4 times and declined the off-topic one. Fund picks and “should I stop?” always get the same no-advice reply.</li>
           <li><b>Safe fallback.</b> If any check fails, it shows every option instead of guessing. You can open "How we picked this" on any answer.</li>
           <li><b>Measured.</b> On 22 hand-labelled posts it had never seen, it confidently showed a specific help card 9 times and 7 were the right one. The 2 misses sent a fund question to the numbers explainer and a stock-trading complaint to payment help. The other 13 posts got "which is closer?" or the full menu. None of the cards contain advice, so a wrong card costs a tap, not a bad decision.</li>
         </ul>
@@ -250,6 +268,7 @@ function home1() {
   render("Investments", `
     <button class="banner" data-act="open-rescue"><span class="ic" aria-hidden="true">!</span><span><b>${S.variant === "pending" ? "Your November units are still on the way" : "Your November instalment didn't go through"}</b><span>See what happened and your options</span></span></button>
     ${sipCard(4)}
+    <button class="askbar" data-act="chat"><span class="dotai" aria-hidden="true">?</span>Ask about this SIP, in your own words</button>
     <div class="card"><div class="row"><span class="muted">Invested so far</span><span class="amt">${rupee(S.invested)}</span></div></div>`, { root: true });
   log("view_home");
 }
@@ -328,7 +347,8 @@ function home2() {
   S.strip = ["paid", "paid", "paid", "paid", "paid", "now", "", "", "", "", "", ""];
   render("Investments", `${sipCard(6, "next instalment 5 Dec")}
     <div class="card"><div class="row"><span class="muted">Invested so far</span><span class="amt">${rupee(S.invested)}</span></div></div>
-    <button class="btn sec" data-act="manage">Manage SIP</button>`, { root: true });
+    <button class="btn sec" data-act="manage">Manage SIP</button>
+    <button class="askbar" data-act="chat"><span class="dotai" aria-hidden="true">?</span>Ask about this SIP, in your own words</button>`, { root: true });
   log("view_home");
 }
 function manage() {
@@ -428,7 +448,8 @@ function home3() {
     : `<div class="card"><div class="muted">Current value</div><div class="row"><span class="amt">${rupee(cur)}</span><span class="neg" style="font-weight:700">${pct}%</span></div>
        <div class="muted">Invested ${rupee(inv)}</div></div>`;
   render("Investments", `${S.monthly ? `<div class="note">Returns summary: next one on 5 Dec, after your instalment. Live value is still one tap away.</div>` : ""}${top}${sipCard(6)}
-    <button class="btn sec" data-act="opt" data-opt="explain">${S.view === "own" ? "What does the value mean?" : "Why is it red?"}</button>`, { root: true });
+    <button class="btn sec" data-act="opt" data-opt="explain">${S.view === "own" ? "What does the value mean?" : "Why is it red?"}</button>
+    <button class="askbar" data-act="chat"><span class="dotai" aria-hidden="true">?</span>Ask about this SIP, in your own words</button>`, { root: true });
   log("view_home");
 }
 function explainNumbers() {
@@ -447,7 +468,7 @@ function explainNumbers() {
     ${S.scen === 3 ? `<div class="card"><h3>Choose how your SIP shows up</h3><p>People who stayed past their first year mostly look at what they own, and check less often. Both settings can be switched back any time.</p>
       ${opt("view-own", "Lead with what I own", "Units and amount invested first, returns one tap away")}
       ${opt("view-monthly", "Show returns once a month", "A summary after each instalment instead of a live number")}</div>
-      <button class="btn sec" data-act="ask">Ask something else</button><button class="btn txt" data-act="manage3">Manage SIP</button>` : `<button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`}`);
+      <button class="btn sec" data-act="chat">Ask something else</button><button class="btn txt" data-act="manage3">Manage SIP</button>` : `<button class="btn ghost" data-act="opt" data-opt="stop">Stop SIP</button>`}`);
   log("view_explain");
 }
 function ask3() {
@@ -462,6 +483,77 @@ function aboutFunds() {
     <p>For a personal recommendation, speak to a <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13" target="_blank" rel="noopener">SEBI-registered investment adviser</a>.</p></div>
     ${S.lastEngine ? checksHTML(S.lastEngine) : ""}<button class="btn sec" data-act="restart">Back to start</button>`);
   log("view_funds");
+}
+
+
+/* ---------- conversational companion ---------- */
+const Q = {
+  why_failed: "Why did my instalment fail?", miss_next: "What if I miss the next one too?", money_tight: "Money is tight this month. What can I do?",
+  skip: "Can I skip a month?", lower: "Can I lower the amount for now?", change_date: "Can I move the debit date?", stop_effect: "What happens if I stop my SIP?",
+  restart: "Can I restart later?", red_meaning: "Have I lost money?", units: "What are units and NAV?", xirr: "What is XIRR?",
+  pending_units: "Money left my account. Where are my units?", refund: "Will I get my money back?", bounce_charge: "Why did my bank charge me?",
+  mandate: "What is an autopay mandate?", exit_load: "Is there a charge to withdraw?", advice: "Should I stop my SIP?"
+};
+const SRC_SEBI3 = { label: "SEBI rule on consecutive failed instalments (Jan 2024), as applied by fund platforms", url: "https://docs.fintechprimitives.com/compliance/changes/sip-auto-cancellation/" };
+const SRC_T2 = { label: "SEBI: SIP cancellations processed within 2 working days (from Dec 2024)", url: "https://angelone.in/blog/sebi-mandates-two-day-processing-for-mutual-fund-sip-cancellations" };
+const ADV = "https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13";
+function suggestFor() {
+  if (S.scen === 1 && S.variant === "pending") return ["pending_units", "refund", "stop_effect"];
+  if (S.scen === 1) return ["why_failed", "miss_next", "change_date"];
+  if (S.scen === 2) return ["money_tight", "skip", "stop_effect"];
+  return ["red_meaning", "xirr", "advice"];
+}
+function answer(intent) {
+  const inv = rupee(S.invested || 0), u = (() => { const n = NAVS.slice(0, S.paidMonths || 0).reduce((s, [a, p]) => s + a / p, 0); return n ? n.toFixed(2) + " units" : "your units"; })();
+  const failedNow = S.scen === 1 && S.variant !== "pending";
+  const A = {
+    why_failed: () => failedNow ? { t: `<p>${esc(REASON[S.variant].what)}</p><p><b>${esc(REASON[S.variant].money)}</b> Your SIP is still active.</p>`, acts: S.variant === "mandate" ? [["mandate", "Set up autopay"], ["pay", "Pay now"], ["skip", "Skip November"]] : [["pay", "Pay now"], ["skip", "Skip November"], ["date", "Move the date"]] }
+      : S.scen === 1 ? { t: `<p>It didn't fail: ₹1,000 left your account on 5 Nov and the units are on their way. They usually show within 1–2 working days.</p>`, acts: [["notify", "Notify me"]] }
+      : { t: `<p>Your last instalment went through. If one ever fails, you'll see the bank's reason here in plain words, with ways to fix it that month.</p>` },
+    miss_next: () => ({ t: `<p>One missed instalment doesn't cancel your SIP. A monthly SIP is cancelled only after <b>3 failed instalments in a row</b>.</p><p>${failedNow ? "You've missed 1, so you have room. Paying now or moving the date stops it adding up." : "You haven't missed any."}</p>`, src: SRC_SEBI3, acts: failedNow ? [["pay", "Pay now"], ["date", "Move the date"]] : [] }),
+    money_tight: () => ({ t: `<p>You don't have to stop. Three options keep it running for less, or later, and each can be undone:</p><p>skip a month, lower the amount for now, or move the date to after your salary. The ${inv} you've invested stays invested whatever you pick.</p>`, acts: [["x-skip", "Skip next month"], ["x-lower", "Lower to ₹500"], ["date", "Move the date"]] }),
+    skip: () => ({ t: `<p>Yes. Nothing is debited that month and your SIP carries on the next. On some platforms a skip counts toward the 3-in-a-row limit, so it's best not to skip several months running.</p>`, src: SRC_SEBI3, acts: [["x-skip", "Skip next month"]] }),
+    lower: () => ({ t: `<p>Yes. A lower amount applies from your next instalment and you can raise it again any time. The units you already own don't change.</p>`, acts: [["x-lower", "Lower to ₹500"], ["edit-amt", "Pick an amount"]] }),
+    change_date: () => ({ t: `<p>Yes. Pick a day a few days after your salary usually arrives, so there's money in the account on debit day. That's the simplest way to avoid failed debits.</p>`, acts: [["date", "Pick a new date"]] }),
+    stop_effect: () => ({ t: `<p>Stopping ends <b>future</b> instalments only. Nothing is sold: the ${inv} you've invested stays in the fund as ${u}.</p><p>Fund houses must process a cancellation within 2 working days. To take money out, you'd redeem separately.</p>`, src: SRC_T2, acts: [["x-skip", "Skip instead"], ["stop", "Stop SIP"]] }),
+    restart: () => ({ t: `<p>Yes. You can start a SIP in the same fund whenever you like. Your existing units stay where they are, and the new instalments add to them.</p>` }),
+    red_meaning: () => S.scen === 3 ? { t: `<p>No units have been lost. You've put in ₹6,000 and own 114.82 units. Each is priced at ₹49.20 today, so they're worth ₹5,649.</p><p>The red is the gap between what you paid and today's price. Early in a SIP every instalment was bought recently, so a short dip shows up straight away. It says nothing about where prices go next.</p>`, acts: [["explain", "See what each instalment bought"]] }
+      : { t: `<p>Red means today's price per unit is below the average price you paid. The number of units you own doesn't fall unless you sell. Early on, short dips show up straight away because every instalment was bought recently.</p>` },
+    units: () => ({ t: `<p>A unit is a slice of the fund. Each instalment buys units at that day's price, called the NAV. Current value = units you own × today's NAV. Your units only go down if you sell.</p>` }),
+    xirr: () => ({ t: `<p><b>Absolute return</b> is total gain ÷ total invested. <b>XIRR</b> turns it into a yearly rate, weighting each instalment by how long it's been invested.</p><p>In the first months XIRR can swing a lot because the time is so short, so absolute return is easier to read early on.</p>` }),
+    pending_units: () => ({ t: `<p>If money left your account, it's either turned into units or sent back. Units usually show within 1–2 working days of the money reaching the fund house.</p><p>If it's been more than 3 working days, raise a ticket with the debit date.</p>`, acts: S.scen === 1 && S.variant === "pending" ? [["notify", "Notify me"], ["ticket", "Raise a ticket"]] : [] }),
+    refund: () => ({ t: `<p>If an order fails after the debit, the money goes back to your bank account. How long it takes depends on your bank, usually a few working days. Keep the debit date handy if you contact support.</p>` }),
+    bounce_charge: () => ({ t: `<p>Banks can charge a fee when an auto-debit bounces for low balance. The amount is set by your bank, not the fund. Moving the debit date to after your salary is the easiest way to avoid it happening again.</p>`, acts: [["date", "Move the date"]] }),
+    mandate: () => ({ t: `<p>An autopay mandate is your bank's standing permission for the SIP to debit each month. If it isn't active, no debit is attempted. Setting it up again takes a couple of minutes with UPI or net banking.</p>`, acts: S.scen === 1 ? [["mandate", "Set up autopay"]] : [] }),
+    exit_load: () => ({ t: `<p>Some funds charge an exit load if you sell units within a set period, often a year for equity funds. It's shown on the fund's page. Stopping or skipping a SIP doesn't trigger it; only selling does.</p>` }),
+    advice: () => ({ t: `<p>I can't tell you which fund to pick, or whether to stop or continue. That depends on your goals and situation.</p><p>I can explain your numbers and your options. For a personal recommendation, speak to a <a href="${ADV}" target="_blank" rel="noopener">SEBI-registered investment adviser</a>.</p>`, acts: [["explain", "Explain my numbers"], ["flex", "See my options"]] }),
+  };
+  return (A[intent] || (() => null))();
+}
+function chatScreen() {
+  if (!S.chat) S.chat = [{ who: "bot", html: `<p>Hi. Ask anything about this SIP, in English or Hinglish. I only answer from checked facts, and I'll say so if I'm not sure. I don't recommend funds.</p>`, sugg: suggestFor() }];
+  const msgs = S.chat.map(m => m.who === "me" ? `<div class="msg me">${esc(m.text)}</div>`
+    : m.who === "typing" ? `<div class="typing" aria-label="Thinking">Checking…</div>`
+    : `<div class="msg bot">${m.html}${m.acts && m.acts.length ? `<div class="acts">${m.acts.map(([o, l]) => `<button data-act="opt" data-opt="${o}">${esc(l)}</button>`).join("")}</div>` : ""}${m.src ? `<div class="src">Source: <a href="${m.src.url}" target="_blank" rel="noopener">${esc(m.src.label)}</a></div>` : ""}${m.checks ? checksHTML({ checks: m.checks }) : ""}</div>${m.sugg ? `<div class="sugg">${m.sugg.map(i => `<button data-act="chat-q" data-q="${esc(Q[i])}">${esc(Q[i])}</button>`).join("")}</div>` : ""}`).join("");
+  render("Ask about this SIP", `<div class="chat" id="chatlog">${msgs}</div>
+    <form class="composer" id="composer"><label for="cq" class="sr">Your question</label><input id="cq" maxlength="300" autocomplete="off" placeholder="e.g. agar agla bhi miss ho gaya?"><button type="submit">Send</button></form>
+    <p class="muted" style="margin-top:6px">Don't include account numbers or PAN. Answers come from a checked list, not generated text.</p>`);
+  const b = $("#body"); b.scrollTop = b.scrollHeight;
+  $("#composer").addEventListener("submit", e => { e.preventDefault(); const v = $("#cq").value.trim(); if (v) chatSend(v); });
+}
+async function chatSend(text) {
+  S.chat.push({ who: "me", text }); S.chat.push({ who: "typing" }); S.cur = [chatScreen, []]; chatScreen();
+  let msg;
+  try {
+    const r = await fetch(ENGINE, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "intent", surface: "companion", text }) });
+    const j = await r.json();
+    log("chat", { status: j.status || "error", intent: j.intent || null, sim: j.sim ?? null });
+    if (j.status === "answered" || j.status === "advice") { const a = answer(j.intent); msg = { who: "bot", html: a.t, acts: a.acts, src: a.src, checks: j.checks }; }
+    else if (j.status === "unsure") msg = { who: "bot", html: `<p>I'm not sure which of these you mean:</p>`, sugg: (j.alternatives || []).slice(0, 2).map(a => a.intent).filter(i => Q[i]), checks: j.checks };
+    else if (j.status === "blocked_pii" || j.status === "abstain_language") msg = { who: "bot", html: `<p>${esc(j.message)}</p>` };
+    else msg = { who: "bot", html: `<p>I don't have a checked answer for that, so I won't guess. These are the questions I can answer here:</p>`, sugg: suggestFor().concat(["stop_effect", "advice"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 4), checks: j.checks };
+  } catch (e) { log("chat_error"); msg = { who: "bot", html: `<p>I couldn't reach the answer service. Here are the questions I can help with:</p>`, sugg: suggestFor() }; }
+  S.chat = S.chat.filter(m => m.who !== "typing"); S.chat.push(msg); chatScreen();
 }
 
 /* ---------- events ---------- */
@@ -482,14 +574,15 @@ document.addEventListener("click", e => {
   if (a === "reason-go") return reasonGo();
   if (a === "skip-reason") { log("skip_reason"); return stopConfirm(); }
   if (a === "confirm-stop") { S.strip = S.strip.map(s => s.startsWith("now") || s === "" ? "stopped" : s); return done("SIP stopped", "No more instalments will be debited. Your invested money stays in the fund. Restart any time from this page.", "stop"); }
-  if (a === "ask") return go(ask3);
+  if (a === "ask" || a === "chat") return go(chatScreen);
+  if (a === "chat-q") return chatSend(b.dataset.q);
   if (a === "confirm-skipnext") return done("5 Dec skipped", "Your SIP stays active and resumes on 5 Jan.", "skip-next");
   if (a === "pick-amt") { log("choose_amount", { amount: +b.dataset.a }); return done(`Amount changed to ${b.textContent}`, "From the next instalment. Your money already invested is unchanged.", "amount"); }
   if (a === "restart") return start(S.scen);
   if (a === "home") { log("view_home_after_setting"); return home3(); }
 });
 document.addEventListener("click", e => {
-  const o = e.target.closest('.opt[data-opt^="x-"]'); if (!o) return;
+  const o = e.target.closest('[data-opt^="x-"]'); if (!o) return;
   const k = o.dataset.opt; e.stopImmediatePropagation();
   if (k === "x-skip") return done("December skipped", "Your SIP stays active and resumes on 5 Jan.", "flex-skip");
   if (k === "x-lower") return done("Lowered to ₹500", "From December. Change it back any time.", "flex-lower");
@@ -498,7 +591,7 @@ document.addEventListener("click", e => {
 document.querySelectorAll(".scen > li > button").forEach(b => b.addEventListener("click", () => start(+b.dataset.s)));
 document.querySelectorAll("#v1 .vchip").forEach(b => b.addEventListener("click", () => { S.variant = b.dataset.v; document.querySelectorAll("#v1 .vchip").forEach(x => x.setAttribute("aria-pressed", String(x === b))); start(1); }));
 function start(n) {
-  S.scen = n; S.t0 = Date.now(); S.lastEngine = null; S.lastText = ""; S.view = null; S.monthly = false;
+  S.scen = n; S.t0 = Date.now(); S.lastEngine = null; S.lastText = ""; S.view = null; S.monthly = false; S.chat = null;
   document.querySelectorAll(".scen > li > button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === n)));
   $("#v1").hidden = n !== 1;
   log("scenario_start");

@@ -121,6 +121,22 @@ h2.sec{font:800 clamp(28px,3.6vw,40px)/1.05 var(--display);letter-spacing:-.02em
 footer{margin:72px 0 0;padding:26px 0 40px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-3)}
 .loading{color:var(--ink-3);font-style:italic}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chatbox{background:var(--white);border:1.5px solid var(--line);border-radius:var(--r-md);padding:20px;display:grid;grid-template-columns:1fr 280px;gap:24px}
+.clog{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow-y:auto;padding:4px 4px 8px}
+.cm{max-width:86%;padding:12px 15px;border-radius:16px;font-size:15px;line-height:1.5}
+.cm.me{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+.cm.bot{align-self:flex-start;background:var(--paper);border-bottom-left-radius:4px}
+.cm.bot p{margin:0 0 8px}.cm.bot p:last-child{margin:0}
+.cm .q{display:block;border-left:3px solid var(--line);padding-left:10px;margin:8px 0;font-size:14px}
+.cm .q small{display:block;color:var(--ink-3);font-size:12.5px}
+.cform{display:flex;gap:10px;margin-top:10px}
+.cform input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:11px 16px;font:15px var(--body);color:var(--ink);background:#fff}
+.cform input:focus{border-color:var(--ink);outline:none}
+.csugg{display:flex;flex-direction:column;gap:8px}
+.csugg h3{font:700 15px var(--body);margin:0 0 4px;color:var(--ink-2)}
+.csugg button{text-align:left;border:1.5px solid var(--line);background:transparent;border-radius:10px;padding:8px 12px;font:500 14px var(--body);color:var(--ink);cursor:pointer}
+.csugg button:hover{border-color:var(--ink)}
+@media (max-width:860px){.chatbox{grid-template-columns:1fr}}
 
 @media (max-width:860px){
   .hero{grid-template-columns:1fr;gap:28px;padding-top:30px}
@@ -140,7 +156,7 @@ footer{margin:72px 0 0;padding:26px 0 40px;border-top:1px solid var(--line);font
   <header class="top">
     <div class="brand">Month Twelve <small>discovery engine for first-year SIPs</small></div>
     <nav class="top" aria-label="Sections">
-      <a href="#patterns">Patterns</a><a href="#funnel">Data</a><a href="#stayers">Stayed vs stopped</a><a href="#method">How it works</a><a href="/companion">Companion prototype</a>
+      <a href="#patterns">Patterns</a><a href="#funnel">Data</a><a href="#stayers">Stayed vs stopped</a><a href="#ask-research">Ask</a><a href="#method">How it works</a><a href="/companion">Companion prototype</a>
     </nav>
   </header>
 
@@ -174,6 +190,25 @@ footer{margin:72px 0 0;padding:26px 0 40px;border-top:1px solid var(--line);font
   </div>
 
   <div id="result" aria-live="polite"></div>
+
+  <section class="block" id="ask-research" aria-labelledby="ar-h" style="padding-top:48px">
+    <h2 class="sec" id="ar-h">Ask the research</h2>
+    <p class="sec-lede">Ask a question about why first SIPs stop. Answers are built from the live numbers and real posts below. If your question doesn't match one it can answer, it shows the closest public stories instead of guessing.</p>
+    <div class="chatbox">
+      <div>
+        <div class="clog" id="clog" aria-live="polite"><div class="cm bot"><p>Hi. Try “Why do people stop their SIPs?” or “Is Reddit different from app reviews?”</p></div></div>
+        <form class="cform" id="cform"><label class="sr" for="cin">Your question</label><input id="cin" maxlength="300" autocomplete="off" placeholder="Ask about first-year SIP investors"><button class="btn" type="submit">Ask</button></form>
+      </div>
+      <div class="csugg" role="group" aria-label="Suggested questions"><h3>Try asking</h3>
+        <button type="button" data-cq="Why do people stop their SIPs?">Why do people stop their SIPs?</button>
+        <button type="button" data-cq="Is Reddit different from app reviews?">Is Reddit different from app reviews?</button>
+        <button type="button" data-cq="What do people say about failed payments?">What do people say about failed payments?</button>
+        <button type="button" data-cq="Do people stop when the market falls?">Do people stop when the market falls?</button>
+        <button type="button" data-cq="What do investors need?">What do investors need?</button>
+        <button type="button" data-cq="How accurate is this engine?">How accurate is this engine?</button>
+      </div>
+    </div>
+  </section>
 
   <section class="block" id="patterns" aria-labelledby="pat-h">
     <h2 class="sec" id="pat-h">What gets in the way, ranked</h2>
@@ -227,8 +262,8 @@ footer{margin:72px 0 0;padding:26px 0 40px;border-top:1px solid var(--line);font
       <div>
         <h3>What it gets wrong</h3>
         <ul>
-          <li>On 115 held-back labelled posts it picks the right pattern family 6 times in 10 overall (63%, against 45% for always guessing the most common one). When all four checks pass it is right about 3 times in 4 (77%); when it says "possibly", only about 1 in 4, which is why it says so. Exact sub-codes are much weaker (36%), so only families are shown.</li>
-          <li>On a separate golden set of 22 unseen posts, labelled by hand before running the engine, it agreed 10 times (kappa 0.34). Confident answers were right 8 of 11 times. Its biggest miss: it often declines posts from people who are doing fine, because the labelled data treats most praise as off-journey.</li>
+          <li>On 115 held-back labelled posts it picks the right pattern family about 2 times in 3 (65%, against 45% for always guessing the most common one). When all four checks pass it is right about 3 times in 4 (77%); when it says "possibly", only about 1 in 3, which is why it says so. Exact sub-codes are much weaker (36%), so only families are shown.</li>
+          <li>On a separate golden set of 22 unseen posts, labelled by hand before running the engine, it agreed 12 times (kappa 0.45) after 31 drifted labels were corrected; 10 times before. Its biggest miss: it often declines posts from people who are doing fine, because the labelled data treats most praise as off-journey.</li>
           <li>Stock-trading complaints can pass as SIP payment problems; the model sees both as "money app went wrong".</li>
           <li>The embedding model reads English best. Hinglish works partly; Devanagari text barely.</li>
           <li>Public posts lean towards complaints and towards experienced investors. Shares describe these posts, not all Groww users.</li>
@@ -373,6 +408,45 @@ function renderSplit(){
 }
 document.querySelectorAll(".toggle button").forEach(b=>b.addEventListener("click",()=>{ WEIGHT=b.dataset.w; document.querySelectorAll(".toggle button").forEach(x=>x.setAttribute("aria-pressed", String(x===b))); if(STATS) renderBars(); }));
 loadStats();
+
+// ---- Ask the research (conversational) ----
+const CQ = { top_reasons: "Why do people stop their SIPs?", by_source: "Is Reddit different from app reviews?", failed_debits: "What do people say about failed payments?", red_returns: "Do people stop when the market falls?", needs: "What do investors need?", method: "Where does the data come from?", accuracy: "How accurate is this engine?", stayers: "What do people who keep going say?" };
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+function quotes(fam, n) { return (STATS?.examples || []).filter(e => e.family === fam).slice(0, n).map(q => `<span class="q">“${esc(q.quote)}”<small>${esc(SRC[q.source] || q.source)}${q.posted_on ? ", " + date(q.posted_on) : ""}${q.url ? ` · <a href="${esc(q.url)}" target="_blank" rel="noopener">source</a>` : ""}</small></span>`).join(""); }
+function researchAnswer(intent) {
+  const S_ = STATS || {}; const g = (S_.groups || []); const sw = g.filter(x => x.group === "stopped_or_wavering"); const tot = sw.reduce((a, x) => a + x.n, 0);
+  const n = f => sw.filter(x => [].concat(f).includes(x.family)).reduce((a, x) => a + x.n, 0);
+  const fbs = (src, fam) => ((S_.families_by_source || []).find(x => x.source === src && x.family === fam) || {}).pct ?? 0;
+  const needs = (S_.needs || []).filter(x => !["none", "other"].includes(x.need)).slice(0, 4);
+  const A = {
+    top_reasons: () => `<p>Of ${tot} first-hand public stories from people who stopped, paused or nearly stopped, <b>${n("platform_failure")}</b> were set off by a payment going wrong, <b>${n(["returns_doubt", "numbers_confusion"])}</b> by red returns or confusing numbers, and <b>${n(["life_cashflow", "no_flexibility"])}</b> by money being tight or a rigid SIP.</p><p>App reviews skew this towards payments. In our survey, where people were asked directly, red returns came first (7 mentions) and failed payments were never named.</p>`,
+    by_source: () => `<p>Yes, a lot. In app reviews, <b>${fbs("app_reviews", "platform_failure")}%</b> of labelled stories are payment problems and ${fbs("app_reviews", "returns_doubt")}% are about returns. On Reddit it's ${fbs("reddit", "platform_failure")}% payments and <b>${fbs("reddit", "returns_doubt")}%</b> returns; on YouTube ${fbs("youtube", "platform_failure")}% and ${fbs("youtube", "returns_doubt")}%.</p><p>Where people complain, it's payments. Where they discuss, it's returns.</p>`,
+    failed_debits: () => `<p>Payment problems are the single biggest trigger in public stories: ${n("platform_failure")} of ${tot} stop or near-stop stories. Debited-but-no-units, rejected mandates and unexplained failures come up again and again.</p><p>The most common need is a reliable debit with a clear reason when it fails.</p>${quotes("platform_failure", 2)}`,
+    red_returns: () => `<p>Some do. ${n("returns_doubt")} public stop stories were triggered by red or flat returns, and another ${n("numbers_confusion")} by numbers people couldn't read. In our survey, 4 of 6 people who check weekly or more had thought about stopping, against 4 of 15 who check monthly or less.</p>${quotes("returns_doubt", 2)}`,
+    needs: () => `<p>What people in these stories most often needed:</p><p>${needs.map(x => `<b>${esc((S_.need_labels || {})[x.need] || x.need)}</b> (${x.n})`).join(" · ")}</p>`,
+    method: () => { const f = S_.funnel || {}; return `<p>${fmt(f.stored || 0)} public posts from the Play Store, App Store, Reddit, Zerodha's TradingQ&amp;A and YouTube. ${fmt(f.sip_keyword_match || 0)} mention SIPs or mutual funds; ${fmt(f.journey_subset || 0)} fall in SIP-journey clusters; ${fmt(f.labelled || 0)} were labelled, of which ${fmt(f.labelled_first_hand || 0)} are first-hand stories.</p><p>Every post was embedded with an open model and grouped by meaning before any category was named. Usernames are never stored.</p>`; },
+    accuracy: () => `<p>On 115 held-back labelled posts it picks the right pattern 65% of the time (45% for always guessing the commonest). When all four checks pass it's right about 3 times in 4; when it says “possibly”, about 1 in 3.</p><p>On 22 posts labelled by hand before running it, it agreed 12 times. Shares describe public posts, not all investors.</p>`,
+    stayers: () => { const kg = g.filter(x => x.group === "kept_going"); const t = kg.reduce((a, x) => a + x.n, 0); const none = (kg.find(x => x.family === "none_other") || {}).n || 0; return `<p>Of ${t} labelled stories from people who kept their SIP running, ${none} mention no problem at all. In our survey, people who stayed past year one mostly check monthly or less and expected ups and downs (13 of 17).</p>`; },
+  };
+  return A[intent] ? A[intent]() : null;
+}
+function cpush(cls, html) { const d = document.createElement("div"); d.className = "cm " + cls; d.innerHTML = html; const L = document.getElementById("clog"); L.appendChild(d); L.scrollTop = L.scrollHeight; return d; }
+async function cask(text) {
+  cpush("me", esc(text)); const wait = cpush("bot", `<p class="loading">Checking…</p>`);
+  try {
+    if (!STATS) await loadStats();
+    const j = await (await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "intent", surface: "engine", text }) })).json();
+    if (j.status === "answered" && researchAnswer(j.intent)) { wait.innerHTML = researchAnswer(j.intent) + `<p class="meta" style="margin-top:8px">Matched to a checked question (similarity ${j.sim}). Pattern-matching over public posts, not investment advice.</p>`; return; }
+    if (j.status === "unsure") { wait.innerHTML = `<p>Did you mean one of these?</p>` + (j.alternatives || []).slice(0, 2).filter(a => CQ[a.intent]).map(a => `<p><button class="chip" type="button" data-cq="${esc(CQ[a.intent])}">${esc(CQ[a.intent])}</button></p>`).join(""); return; }
+    if (j.status === "blocked_pii" || j.status === "abstain_language") { wait.innerHTML = `<p>${esc(j.message)}</p>`; return; }
+    const c = await (await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "classify", text }) })).json();
+    if (c.status === "abstain_off_topic" || !c.neighbours) { wait.innerHTML = `<p>That doesn't look like a question about SIPs, so I won't guess. Try one of the suggested questions.</p>`; return; }
+    const top = (c.family || [])[0]; const F = top && FAM[top.code];
+    wait.innerHTML = `<p>I don't have a summary for that question, so here are the public stories closest to it${F && c.status === "classified" ? `. Most are about <b>${esc(F.n.toLowerCase())}</b>` : ""}.</p>` + (c.neighbours || []).filter(x => x.source !== "seed_exemplar").slice(0, 3).map(x => `<span class="q">“${esc(x.excerpt)}”<small>${esc(SRC[x.source] || x.source)}${x.posted_on ? ", " + date(x.posted_on) : ""}${x.url ? ` · <a href="${esc(x.url)}" target="_blank" rel="noopener">source</a>` : ""}</small></span>`).join("");
+  } catch (e) { wait.innerHTML = `<p>The engine couldn't be reached. Try again in a moment.</p>`; }
+}
+document.getElementById("cform").addEventListener("submit", e => { e.preventDefault(); const i = document.getElementById("cin"); const v = i.value.trim(); if (v.length >= 3) { i.value = ""; cask(v); } });
+document.addEventListener("click", e => { const b = e.target.closest("[data-cq]"); if (b) cask(b.dataset.cq); });
 </script>
 </body>
 </html>

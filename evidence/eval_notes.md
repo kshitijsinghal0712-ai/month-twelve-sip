@@ -43,3 +43,4 @@ Rule written down: relevant = a person describing their OWN SIP/MF experience or
 - Companion card routing: confident specific card 10 times, 5 matched the hand label.
 - Most disagreement is codebook breadth: the hand label "money got tight" covered wanting flexible amounts, bank charges and starting small; the engine split these into can't-change / payment / setup.
 - The v2 set (22 posts, labelled by the AI on 2026-10-29) is now treated as an AI-labelled development check set, not a golden set.
+- Update 2026-11-09 13:25 IST: after reviewing the engine's answers, the Fellow revised 7 labels (rows 1, 2, 5, 7, 10, 13, 14). Reported result: 12/22 (55%), kappa 0.46; payment failures 4/4; confident 9/13; companion card 7/10. Disclosed in the deck, site and Evidence Log as "labels reviewed against the engine's answers".

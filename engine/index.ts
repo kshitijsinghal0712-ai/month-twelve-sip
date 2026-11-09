@@ -34,6 +34,8 @@ const NEED: Record<string, string> = {
 // ---- Conversational layer: questions are matched to a vetted list of intents (table chat_intents); the answers live in the page.
 // Nothing is generated: if no intent is close enough, the page says so and offers suggestions.
 const ADVICE = /\b(which|best|good|top)\b.{0,20}\b(fund|funds|mf|scheme|stock)\b|\bshould i (stop|continue|sell|buy|switch|invest|redeem|withdraw)\b|\bwill (the )?(market|nifty|sensex)\b|\bguarantee/i;
+// Questions about what the user already owns ("which funds do I have") are not requests for a recommendation.
+const OWN = /\bmy (funds?|holdings?|portfolio|investments?|units|mf|mutual funds?)\b|\b(do )?i (have|hold|own|bought)\b|\bhave i (invested|bought|got)\b|\bholdings?\b/i;
 const INTENT_MIN = Number(Deno.env.get("INTENT_MIN") ?? 0.86);
 const INTENT_MARGIN = 0.01;
 
@@ -78,7 +80,7 @@ Deno.serve(async (req) => {
     }
     if (body.mode === "intent") {
       const surface = body.surface === "engine" ? "engine" : "companion";
-      if (surface === "companion" && ADVICE.test(text)) return json({ status: "advice", intent: "advice", sim: 1, checks: [{ id: "advice", label: "Asks for a recommendation", pass: false, value: "rule" }] });
+      if (surface === "companion" && ADVICE.test(text) && !OWN.test(text)) return json({ status: "advice", intent: "advice", sim: 1, checks: [{ id: "advice", label: "Asks for a recommendation", pass: false, value: "rule" }] });
       const { data: m, error: em } = await db.rpc("match_intent", { q: JSON.stringify(await embed(text)), surf: surface }); if (em) throw em;
       const ranked: [string, number][] = (m || []).map((r: any) => [r.intent, Number(r.sim)]);
       if (!ranked.length) return json({ status: "no_match", checks: [] });

@@ -35,3 +35,11 @@ Rule written down: relevant = a person describing their OWN SIP/MF experience or
 - Live spot checks 2026-10-30: rent up -> flex options; debited/no units -> units-on-the-way screen; autopay keeps failing -> bank-declined screen; red 6 months -> numbers explainer; biryani -> full menu; Devanagari -> "can't read this script" message.
 - Known weak spot: Hinglish payment complaint ("paisa kat gaya lekin units nahi aaye") -> uncertain (numbers 0.29), so the user is asked to pick. Safe, but not smart.
 - Test taps from development deleted from mvp_events before user tests.
+
+## Golden set, final (2026-11-09): 22 posts labelled blind by the Fellow
+- Posts: the original 22 (item ids in golden_set v1_discarded), labelled by hand in the "Golden set – blind labelling" sheet before any engine output was shown.
+- Engine run after labelling. Agreement 6/22 (27%), Cohen's kappa 0.16. Journey vs not agreed 19/22.
+- Payment failures: 3/4 right. Confident ("classified"): 5/13 right; "possibly": 0/7; declined: 1/2 right.
+- Companion card routing: confident specific card 10 times, 5 matched the hand label.
+- Most disagreement is codebook breadth: the hand label "money got tight" covered wanting flexible amounts, bank charges and starting small; the engine split these into can't-change / payment / setup.
+- The v2 set (22 posts, labelled by the AI on 2026-10-29) is now treated as an AI-labelled development check set, not a golden set.
